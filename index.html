@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Milestone bar</title>
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+	<style>
+		body, text{font-family: 'Roboto', sans-serif;}
+		.label{ font-size:.8em}
+		.tick text{ fill: #A9B1B7;}
+	</style>
+</head>
+<body>
+	<div class="chart"></div>
+	<script>
+		const chartHeight = 120;
+		const svg = d3.select('.chart').append('svg').attr('viewBox','0 0 540 200')
+		const chart= svg.append('g')
+						.attr('transform','translate(15,40)')
+
+		let scale = d3.scaleLinear()
+					.range([0,500])
+					.domain([0,500])
+
+		let rect1 = chart.append('rect')
+					.attr('x',scale(0))
+					.attr('y',0)
+					.attr('height',chartHeight)
+					.attr('fill',"#EDEFF0")
+					.attr('width',scale(0))
+
+		let rect2 = chart.append('rect')
+					.attr('x',scale(0))
+					.attr('y',0)
+					.attr('height',chartHeight)
+					.attr('fill',"#60D4F2")
+					.attr('width',scale(0))
+
+		var x_axis = d3.axisBottom(scale)
+					.tickSize(-chartHeight)
+					.ticks(10)
+
+		chart.append("g").attr('transform',`translate(0,${chartHeight})`).call(x_axis);
+		chart.select(".domain").remove();
+		chart.selectAll(".tick line").attr('stroke','#FFF');
+		chart.append("text").attr('x',scale(150)-5).attr('y',-10).attr('text-anchor','end').text('Potential beneficiaries')
+		chart.append("text").attr('x',scale(500)-5).attr('y',-10).attr('text-anchor','end').text('Milestone')
+		svg.append("text").attr("class","label").attr('x',520).attr('y',190).attr('text-anchor','end').text('Million beneficiaries')
+		chart.append('line').attr('x1',scale(150)).attr('x2',scale(150)).attr('y1',-25).attr('y2',120).attr("stroke","#A9B1B7").attr('stroke-width',2)
+		chart.append('line').attr('x1',scale(500)).attr('x2',scale(500)).attr('y1',-25).attr('y2',120).attr("stroke","#A9B1B7").attr('stroke-width',2)
+
+		const element = document.querySelector('.chart');
+		const observer = new IntersectionObserver(entries => {
+			if (entries[0].isIntersecting){
+				rect1.transition()
+				.duration(1000)
+				.attr('width',scale(500))
+				rect2.transition()
+				.duration(500)
+				.delay(1000)
+				.attr('width',scale(150))
+			}
+			else{
+				rect1.attr('width',scale(0))
+				rect2.attr('width',scale(0))
+			}
+		});
+		observer.observe(element );
+
+	</script>
+</body>
+</html>
