@@ -8,20 +8,39 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 	<style>
 		body, text{font-family: 'Roboto', sans-serif;}
-		.label{ font-size:.8em}
-		.tick text{ fill: #A9B1B7;}
+		.tick text{ fill: #A9B1B7; font-size:.9rem;}
 	</style>
 </head>
 <body>
-	<div class="chart"></div>
+	<div id="container" class="chart"></div>
 	<script>
+		// use ?language=xx to define language
+		const urlParams = new URLSearchParams(window.location.search);
+		const language = urlParams.get('language') || 'en';
+		const labels = {
+			en:{
+				"pot-ben":"Potential beneficiaries",
+				"milestone":"Milestone",
+				"mil-ben":"Million beneficiaries"
+			},
+			fr:{
+				"pot-ben" : "Bénéficiaires potentiels",
+    		"milestone" : "Jalon",
+    		"mil-ben" : "Million de bénéficiaires"
+			},
+			es:{
+				"pot-ben" : "Beneficiarios potenciales",
+    		"milestone" : "Hito",
+    		"mil-ben" : "Millón de beneficiarios"
+			}
+		}
 		const chartHeight = 120;
-		const svg = d3.select('.chart').append('svg').attr('viewBox','0 0 540 200')
-		const chart= svg.append('g')
-						.attr('transform','translate(15,40)')
+		var clientWidth = document.getElementById('container').clientWidth;
+		const svg = d3.select('.chart').append('svg').attr('width',clientWidth).attr('height',chartHeight + 100);
+		const chart= svg.append('g').attr('transform','translate(40,40)')
 
 		let scale = d3.scaleLinear()
-					.range([0,500])
+					.range([0,clientWidth-80])
 					.domain([0,500])
 
 		let rect1 = chart.append('rect')
@@ -45,9 +64,9 @@
 		chart.append("g").attr('transform',`translate(0,${chartHeight})`).call(x_axis);
 		chart.select(".domain").remove();
 		chart.selectAll(".tick line").attr('stroke','#FFF');
-		chart.append("text").attr('x',scale(150)-5).attr('y',-10).attr('text-anchor','end').text('Potential beneficiaries')
-		chart.append("text").attr('x',scale(500)-5).attr('y',-10).attr('text-anchor','end').text('Milestone')
-		svg.append("text").attr("class","label").attr('x',520).attr('y',190).attr('text-anchor','end').text('Million beneficiaries')
+		chart.append("text").attr('x',scale(150)-5).attr('y',-10).attr('text-anchor','end').text(labels[language]['pot-ben'])
+		chart.append("text").attr('x',scale(500)-5).attr('y',-10).attr('text-anchor','end').text(labels[language]['milestone'])
+		chart.append("text").attr('x',scale(500)).attr('y',150).attr('text-anchor','end').text(labels[language]['mil-ben'])
 		chart.append('line').attr('x1',scale(150)).attr('x2',scale(150)).attr('y1',-25).attr('y2',120).attr("stroke","#A9B1B7").attr('stroke-width',2)
 		chart.append('line').attr('x1',scale(500)).attr('x2',scale(500)).attr('y1',-25).attr('y2',120).attr("stroke","#A9B1B7").attr('stroke-width',2)
 
